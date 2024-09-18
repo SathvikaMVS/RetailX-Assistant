@@ -22,7 +22,7 @@ def read_file(file_name):
             df = pd.read_excel(file_name)
         else:
             raise ValueError(f"Unsupported file format: {extension}")
-        
+        df['column_name'] = df['column_name'].astype(str)
         print(f"Successfully read {file_name}. Shape: {df.shape}")
         print(f"Columns: {df.columns.tolist()}")
         print(f"First row: {df.iloc[0].to_dict()}")

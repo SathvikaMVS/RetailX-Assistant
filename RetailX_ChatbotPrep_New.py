@@ -4,9 +4,6 @@
 # In[1]:
 
 
-get_ipython().system('pip install pandas openpyxl')
-
-
 # In[16]:
 
 

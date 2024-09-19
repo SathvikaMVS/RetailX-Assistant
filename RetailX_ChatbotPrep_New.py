@@ -48,14 +48,16 @@ retailx_data = load_data()
 # Function to search for products
 def find_product(preference):
     products_data = pd.DataFrame(retailx_data['products'])
-    filtered_products = products_data[products_data['Product Name'].str.contains(preference, case=False, na=False)]
+    # Display the actual column names for debugging
+    st.write("Product Data Columns:", products_data.columns)
+    filtered_products = products_data[products_data['ProductName'].str.contains(preference, case=False, na=False)]
     return filtered_products.to_dict(orient='records') if not filtered_products.empty else "No products found."
 
 # Function to check product availability
 def check_product_availability(product_name):
     products_data = pd.DataFrame(retailx_data['products'])
-    available_products = products_data[products_data['Product Name'].str.contains(product_name, case=False, na=False)]
-    return available_products[['Product Name', 'Stock']].to_dict(orient='records') if not available_products.empty else "Product not available."
+    available_products = products_data[products_data['ProductName'].str.contains(product_name, case=False, na=False)]
+    return available_products[['ProductName', 'Stock']].to_dict(orient='records') if not available_products.empty else "Product not available."
 
 # Function to track an order by its ID
 def track_order(order_id):

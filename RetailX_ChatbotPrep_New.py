@@ -7,16 +7,10 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-# Setup nltk data directory
-nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
-if not os.path.exists(nltk_data_dir):
-    os.mkdir(nltk_data_dir)
-nltk.data.path.append(nltk_data_dir)
-
-# Download nltk data if not already present
-nltk.download('punkt', download_dir=nltk_data_dir)
-nltk.download('stopwords', download_dir=nltk_data_dir)
-nltk.download('wordnet', download_dir=nltk_data_dir)
+# Download the necessary NLTK data
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
 
 # Function to read files
 def read_file(file_name):
@@ -39,7 +33,7 @@ def read_file(file_name):
 def convert_timestamps(record):
     return {k: (v.isoformat() if isinstance(v, pd.Timestamp) else v) for k, v in record.items()}
 
-# Read files and load data
+# Read files and load data (no 'data/' folder, files expected at root level)
 @st.cache_data
 def load_data():
     files = ['products_indian', 'stores_indian', 'customers_indian', 'orders_indian']
@@ -47,7 +41,7 @@ def load_data():
 
     for file in files:
         for ext in ['.xlsx', '.xls', '.csv']:
-            file_name = f"data/{file}{ext}"
+            file_name = f"{file}{ext}"  # No 'data/' prefix, expect files in root
             if os.path.exists(file_name):
                 df = read_file(file_name)
                 if not df.empty:

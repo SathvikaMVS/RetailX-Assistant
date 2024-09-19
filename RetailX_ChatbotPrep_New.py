@@ -62,6 +62,8 @@ def check_product_availability(product_name):
 # Function to track an order by its ID
 def track_order(order_id):
     orders_data = pd.DataFrame(retailx_data['orders'])
+    # Display the actual column names for debugging
+    st.write("Order Data Columns:", orders_data.columns)
     order = orders_data[orders_data['Order ID'] == order_id]
     return order.to_dict(orient='records') if not order.empty else "Order not found."
 

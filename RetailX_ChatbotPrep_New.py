@@ -48,8 +48,6 @@ retailx_data = load_data()
 # Function to search for products
 def find_product(preference):
     products_data = pd.DataFrame(retailx_data['products'])
-    # Display the actual column names for debugging
-    st.write("Product Data Columns:", products_data.columns)
     filtered_products = products_data[products_data['ProductName'].str.contains(preference, case=False, na=False)]
     return filtered_products.to_dict(orient='records') if not filtered_products.empty else "No products found."
 
@@ -62,15 +60,13 @@ def check_product_availability(product_name):
 # Function to track an order by its ID
 def track_order(order_id):
     orders_data = pd.DataFrame(retailx_data['orders'])
-    # Display the actual column names for debugging
-    st.write("Order Data Columns:", orders_data.columns)
-    order = orders_data[orders_data['Order ID'] == order_id]
+    order = orders_data[orders_data['OrderID'] == order_id]
     return order.to_dict(orient='records') if not order.empty else "Order not found."
 
 # Function to generate personalized promotions
 def personalized_promotions(customer_id):
     customers_data = pd.DataFrame(retailx_data['customers'])
-    customer = customers_data[customers_data['Customer ID'] == customer_id]
+    customer = customers_data[customers_data['CustomerID'] == customer_id]
     if not customer.empty:
         return f"Special promotions for customer {customer_id}: 10% off on your next purchase!"
     return "Customer not found."

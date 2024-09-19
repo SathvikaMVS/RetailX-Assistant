@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import pandas as pd
 import json
 import os
 
+# Function to read files
 def read_file(file_name):
     _, extension = os.path.splitext(file_name)
     try:
@@ -16,8 +14,6 @@ def read_file(file_name):
             raise ValueError(f"Unsupported file format: {extension}")
         
         print(f"Successfully read {file_name}. Shape: {df.shape}")
-        print(f"Columns: {df.columns.tolist()}")
-        print(f"First row: {df.iloc[0].to_dict()}")
         return df
     except Exception as e:
         print(f"Error reading {file_name}: {str(e)}")
@@ -27,7 +23,7 @@ def read_file(file_name):
 def convert_timestamps(record):
     return {k: (v.isoformat() if isinstance(v, pd.Timestamp) else v) for k, v in record.items()}
 
-# Read files
+# Read files and load data
 files = ['products_indian', 'stores_indian', 'customers_indian', 'orders_indian']
 data = {}
 
@@ -37,7 +33,6 @@ for file in files:
         if os.path.exists(file_name):
             df = read_file(file_name)
             if not df.empty:
-                # Convert Timestamps before storing in data
                 data[file] = [convert_timestamps(record) for record in df.to_dict('records')]
                 break
     if file not in data:
@@ -51,99 +46,25 @@ retailx_data = {
     "orders": data.get('orders_indian', [])
 }
 
-# Print the number of items in each category
-for category, items in retailx_data.items():
-    print(f"Number of {category}: {len(items)}")
-
-# Convert the data to a JSON string with proper formatting
-json_string = json.dumps(retailx_data, indent=2)
-
-# Save the JSON data to a file
-with open('retailx_data.json', 'w') as f:
-    json.dump(retailx_data, f, indent=2)
-
-print("JSON file 'retailx_data.json' has been created successfully.")
-
-# To verify, let's read the file back and print the first product
-with open('retailx_data.json', 'r') as f:
-    loaded_data = json.load(f)
-
-print("\nVerification - First products in the loaded data:")
-print(json.dumps(loaded_data['products'][1], indent=2) if loaded_data['products'] else "No products found")
-
-
-# In[8]:
-
-
-#!/usr/bin/env python
-# coding: utf-8
-
-import pandas as pd
-import json
-import os
-
-def read_file(file_name):
-    _, extension = os.path.splitext(file_name)
-    try:
-        if extension.lower() == '.csv':
-            df = pd.read_csv(file_name)
-        elif extension.lower() in ['.xlsx', '.xls']:
-            df = pd.read_excel(file_name)
-        else:
-            raise ValueError(f"Unsupported file format: {extension}")
-        
-        print(f"Successfully read {file_name}. Shape: {df.shape}")
-        print(f"Columns: {df.columns.tolist()}")
-        print(f"First row: {df.iloc[0].to_dict()}")
-        return df
-    except Exception as e:
-        print(f"Error reading {file_name}: {str(e)}")
-        return pd.DataFrame()  # Return empty DataFrame if file can't be read
-
-# Convert Timestamps to strings
-def convert_timestamps(record):
-    return {k: (v.isoformat() if isinstance(v, pd.Timestamp) else v) for k, v in record.items()}
-
-# Read files
-files = ['products_indian', 'stores_indian', 'customers_indian', 'orders_indian']
-data = {}
-
-for file in files:
-    for ext in ['.xlsx', '.xls', '.csv']:
-        file_name = f"{file}{ext}"
-        if os.path.exists(file_name):
-            df = read_file(file_name)
-            if not df.empty:
-                # Convert Timestamps before storing in data
-                data[file] = [convert_timestamps(record) for record in df.to_dict('records')]
-                break
-    if file not in data:
-        print(f"Couldn't read data for {file}")
-
-# Create the main data structure
-retailx_data = {
-    "products": data.get('products_indian', []),
-    "stores": data.get('stores_indian', []),
-    "customers": data.get('customers_indian', []),
-    "orders": data.get('orders_indian', [])
-}
-
-# Sample functions using the data
+# Function to search for products
 def find_product(preference):
     products_data = pd.DataFrame(retailx_data['products'])
     filtered_products = products_data[products_data['Product Name'].str.contains(preference, case=False, na=False)]
     return filtered_products.to_dict(orient='records') if not filtered_products.empty else "No products found."
 
+# Function to check product availability
 def check_product_availability(product_name):
     products_data = pd.DataFrame(retailx_data['products'])
     available_products = products_data[products_data['Product Name'].str.contains(product_name, case=False, na=False)]
     return available_products[['Product Name', 'Stock']].to_dict(orient='records') if not available_products.empty else "Product not available."
 
+# Function to track an order by its ID
 def track_order(order_id):
     orders_data = pd.DataFrame(retailx_data['orders'])
     order = orders_data[orders_data['Order ID'] == order_id]
     return order.to_dict(orient='records') if not order.empty else "Order not found."
 
+# Function to generate personalized promotions
 def personalized_promotions(customer_id):
     customers_data = pd.DataFrame(retailx_data['customers'])
     customer = customers_data[customers_data['Customer ID'] == customer_id]
@@ -151,6 +72,7 @@ def personalized_promotions(customer_id):
         return f"Special promotions for customer {customer_id}: 10% off on your next purchase!"
     return "Customer not found."
 
+# Function to monitor inventory and detect low stock
 def monitor_inventory():
     products_data = pd.DataFrame(retailx_data['products'])
     low_stock = products_data[products_data['Stock'] < 5]
@@ -199,10 +121,5 @@ if __name__ == "__main__":
         
         else:
             print("Invalid choice. Please select a number between 1 and 6.")
-
-
-# In[ ]:
-
-
 
 

@@ -2,11 +2,21 @@ import streamlit as st
 import pandas as pd
 import json
 import os
-import nltk
-# Download the necessary NLTK data
+import subprocess
+import sys
+
+# Check if nltk is installed, and if not, install it.
+try:
+    import nltk
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "nltk"])
+    import nltk
+
+# Proceed with the rest of the code.
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
+
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
